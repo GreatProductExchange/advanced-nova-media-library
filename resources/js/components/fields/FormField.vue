@@ -1,9 +1,9 @@
 <template>
-  <component :is="field.fullSize ? 'FullWidthField' : 'DefaultField'" :field="field" :errors="errors" :show-help-text="showHelpText">
+  <component :is="field.fullSize ? 'FullWidthField' : 'DefaultField'" :field="currentField" :errors="errors" :show-help-text="showHelpText">
     <template #field>
       <div :class="{'px-8 pt-6': field.fullSize}">
         <gallery slot="value" ref="gallery" v-if="hasSetInitialValue"
-                 v-model="value" :editable="!field.readonly" :removable="field.removable" custom-properties :field="currentField" :multiple="field.multiple" :uploads-to-vapor="field.uploadsToVapor"
+                 v-model="value" :editable="!currentlyIsReadonly" :removable="field.removable" custom-properties :field="currentField" :multiple="field.multiple" :uploads-to-vapor="field.uploadsToVapor"
                  :has-error="hasError" :first-error="firstError"/>
 
         <div v-if="field.existingMedia">

@@ -14,13 +14,13 @@
         <div style="float:left; margin-right: 1em;">
           <component :is="singleComponent" class="mb-3 p-3 mr-3"
                      :key="index" :image="element" :field="field" :editable="editable" :removable="removable || editable" @remove="remove(index)"
-                     :is-custom-properties-editable="customProperties && customPropertiesFields.length > 0" :custom-fields="customPropertiesFields"
+                     :is-custom-properties-editable="editable && customProperties && customPropertiesFields.length > 0" :custom-fields="customPropertiesFields"
                      @edit-custom-properties="customPropertiesImageIndex = index"
                      @crop-start="cropImageQueue.push($event)"
           />
 
           <CustomProperties
-            v-if="customPropertiesImageIndex !== null"
+            v-if="customPropertiesImageIndex === index"
             v-model="images[customPropertiesImageIndex]"
             :parent-field="field"
             :fields="customPropertiesFields"
@@ -231,7 +231,7 @@ export default {
     },
     validateFileSize(file) {
       if (this.field.maxFileSize && ((file.size / 1024) > this.field.maxFileSize)) {
-        this.$toasted.error(this.__(
+        Nova.error(this.__(
           'Maximum file size is :amount MB',
           {amount: String(this.field.maxFileSize / 1024)}
         ));
@@ -250,7 +250,7 @@ export default {
         }
       }
 
-      this.$toasted.error(this.__(
+      Nova.error(this.__(
         'File type must be: :types',
         {types: this.field.allowedFileTypes.join(' / ')}
       ));
