@@ -35,39 +35,20 @@
         return this.image.id ? `/nova-vendor/ebess/advanced-nova-media-library/download/${this.image.id}?uuid=${this.image.uuid}` : null;
       },
     },
-    mounted: function () {
-      this.$nextTick(() => {
-        console.log(this.field);
+    watch: {
+      image: {
+        immediate: true,
+        handler(image) {
+          if (!this.isCustomPropertiesEditable) return;
 
-        let showCustomProperties = false;
-
-        if (this.field.customPropertiesFields !== undefined) {
-          this.field.customPropertiesFields.forEach((customField, index) => {
-            if (customField.required === true) { // Needs to be completed
-
-              let showCurrentProperty = true;
-
-              this.field.value.forEach((fieldValue, index) => {
-                if (fieldValue.custom_properties !== undefined) {
-                  console.log(fieldValue.custom_properties);
-                  for (const customProperty in fieldValue.custom_properties) {
-                      if (customProperty === customField.attribute && fieldValue.custom_properties[customProperty].length > 0) {
-                        showCurrentProperty = false;
-                      }
-                  }
-                }
-              });
-
-              if (showCurrentProperty) showCustomProperties = true;
-            }
+          const missingRequired = this.field.customPropertiesFields.some(field => {
+            const value = image.custom_properties?.[field.attribute];
+            return field.required && (value == null || value === '');
           });
-        }
 
-        if (showCustomProperties === true && this.isCustomPropertiesEditable) {
-          this.$emit('edit-custom-properties');
-        }
-
-      })
+          if (missingRequired) this.$emit('edit-custom-properties');
+        },
+      },
     },
   };
 </script>
